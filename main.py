@@ -1,30 +1,23 @@
-import streamlit as st
 import pandas as pd
 import plotly.express as px
-import requests
-import io
+import streamlit as st
 
+# 데이터 URL (직접 다운로드 링크)
 data_url = "https://drive.google.com/uc?export=download&id=1pwfON6doXyH5p7AOBJPfiofYlni0HVVY"
 
+# 데이터 불러오기
 @st.cache_data
 def load_data():
-    response = requests.get(data_url)
-    response.raise_for_status()  # 다운로드 실패 시 에러 발생
-    file = io.StringIO(response.text)
-    df = pd.read_csv(file)
+    df = pd.read_csv(data_url)
     return df
-
-st.title("구글 드라이브 데이터 Plotly 시각화")
 
 df = load_data()
 
-st.write("### 데이터 미리보기")
+st.title("Plotly 시각화 예제")
+
+st.write("데이터 미리보기:")
 st.dataframe(df.head())
 
-if len(df.columns) >= 2:
-    x_col = st.selectbox("X축 선택", df.columns)
-    y_col = st.selectbox("Y축 선택", df.columns, index=1)
-    fig = px.scatter(df, x=x_col, y=y_col, title=f"{x_col} vs {y_col} Scatter Plot")
-    st.plotly_chart(fig)
-else:
-    st.write("데이터 컬럼이 2개 이상이어야 시각화할 수 있습니다.")
+# 예시: 데이터의 첫 두 컬럼으로 산점도 그리기 (컬럼명에 따라 수정 필요)
+fig = px.scatter(df, x=df.columns[0], y=df.columns[1], title="Scatter plot of first two columns")
+st.plotly_chart(fig)
