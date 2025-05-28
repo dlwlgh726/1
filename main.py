@@ -2,10 +2,8 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-# 데이터 URL (직접 다운로드 링크)
 data_url = "https://drive.google.com/uc?export=download&id=1pwfON6doXyH5p7AOBJPfiofYlni0HVVY"
 
-# 데이터 불러오기
 @st.cache_data
 def load_data():
     df = pd.read_csv(data_url)
@@ -13,11 +11,15 @@ def load_data():
 
 df = load_data()
 
-st.title("Plotly 시각화 예제")
+st.title("Plotly 막대그래프 예제")
 
 st.write("데이터 미리보기:")
 st.dataframe(df.head())
 
-# 예시: 데이터의 첫 두 컬럼으로 산점도 그리기 (컬럼명에 따라 수정 필요)
-fig = px.scatter(df, x=df.columns[0], y=df.columns[1], title="Scatter plot of first two columns")
+# 첫 번째 컬럼을 기준으로 그룹화 후 두 번째 컬럼의 합계 계산 (컬럼명 바꾸기 필요하면 알려줘)
+grouped = df.groupby(df.columns[0])[df.columns[1]].sum().reset_index()
+
+# 막대그래프 생성
+fig = px.bar(grouped, x=df.columns[0], y=df.columns[1], title=f"{df.columns[0]}별 {df.columns[1]} 합계")
+
 st.plotly_chart(fig)
